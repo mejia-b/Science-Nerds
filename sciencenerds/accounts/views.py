@@ -5,7 +5,7 @@ class HomeView(View):
     def get(self,request):
         return render(
             request = request,
-            template_name= 'accounts/home.html',
+            template_name= 'accounts/dashboard.html',
         )
 
 class ProductsView(View):

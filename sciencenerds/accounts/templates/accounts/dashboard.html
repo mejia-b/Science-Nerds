@@ -1,0 +1,44 @@
+{% extends 'accounts/main.html'%}
+
+{% block content %}
+<br>
+
+<div class="row">
+    <!-- First container within this row -->
+    <div class="col-md-5">
+        <h5>CUSTOMERS:</h5>
+        <hr>
+        <div class="card card-body">
+            <!-- Button to create a customer -->
+            <a class="btn btn-primary btn-sm btn-block" href="">Create Customer</a>
+            <!-- Creates a small table under the button and inside this first container -->
+            <table class="table table-sm">
+                <tr>
+                    <th>Customer</th>
+                    <th>Orders</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+    <!-- Second container within this row -->
+    <div class="col-md-7">
+        <h5>LAST 5 ORDERS</h5>
+        <hr>
+        <div class="card card-body">
+            <!-- Button to create an order -->
+            <a class="btn btn-primary btn-sm btn-block" href="">Create Order</a>
+            <!-- Displays a small table under the button and inside this second div container -->
+            <table class="table table-sm">
+                <tr>
+                    <th>Product</th>
+                    <th>Date Ordered</th>
+                    <th>Status</th>
+                    <th>Update</th>
+                    <th>Remove</th>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+</div>
+{% endblock %}
