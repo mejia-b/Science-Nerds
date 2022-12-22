@@ -1,3 +1,5 @@
+{% load static %}
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -9,28 +11,8 @@
     rel="stylesheet" integrity="sha384-rbsA2VBKQhggwzxH7pPCaAqO46MgnOM80zW1RWuH61DGLwZJEdK2Kadq2F9CUG65" 
     crossorigin="anonymous">
 
-    <style>
-        /* #logo{
+    <link rel="stylesheet" type="text/css" href="{% static 'css/main.css' %}">
 
-        } */
-
-        body{
-            background-color: #ebeff5;
-        }
-
-        #total-orders{
-            background-color: #4cb4c7;
-        }
-
-        #orders-delivered{
-            background-color: #7abecc;
-        }
-
-        #orders-pending{
-            background-color: #7CD1C0;
-        }
-        
-    </style>
 </head>
 <body>
     {% include 'accounts/navbar.html'%}
