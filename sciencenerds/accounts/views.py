@@ -1,6 +1,7 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.views import View
 from .models import Customer, Product,Order
+from .forms import OrderForm
 class HomeView(View):
     def get(self,request):
         orders = list(Order.objects.all())[-5:]
@@ -51,4 +52,20 @@ class CustomerView(View):
 
 
 
+class CreateOrderView(View):
+    def get(self,request):
+        # Create form object
+        form = OrderForm()
+        return render(
+            request=request,
+            template_name='accounts/order_form.html',
+            context={'order_form':form},
+        )
+
+    def post(self,request):
+        form = OrderForm(request.POST)
+        if form.is_valid():
+            form.save()
+
+        return redirect('home')
 
