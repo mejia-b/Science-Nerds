@@ -34,10 +34,18 @@ class ProductsView(View):
     
 
 class CustomerView(View):
-    def get(self,request):
+    def get(self,request,id):
+        customer = Customer.objects.get(id=id)
+        orders = customer.order_set.all()
+        total_orders = orders.count()
         return render(
             request = request,
             template_name= 'accounts/customers.html',
+            context={
+                'customer':customer,
+                'orders': orders,
+                'total_orders': total_orders,
+            }
         )
 
 
