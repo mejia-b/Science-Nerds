@@ -3,8 +3,12 @@ from django.views import View
 from .models import Customer, Product,Order
 class HomeView(View):
     def get(self,request):
-        orders = Order.objects.all()
+        orders = list(Order.objects.all())[-5:]
         customers = Customer.objects.all()
+        total_customers = customers.count()
+        total_orders = Order.objects.all().count()
+        delivered = Order.objects.filter(status='Delivered').count()
+        pending = Order.objects.filter(status='Pending').count()
 
         return render(
             request = request,
@@ -12,6 +16,10 @@ class HomeView(View):
             context={
                 'orders':orders, 
                 'customers':customers,
+                'total_customers':total_customers,
+                'total_orders': total_orders,
+                'delivered_count': delivered,
+                'pending_count': pending,
                 }
         )
 
