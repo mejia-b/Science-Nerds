@@ -90,7 +90,20 @@ class UpdateOrderView(View):
 
         return redirect('home')
 
+class DeleteOrderView(View):
+    def get(self,request,id):
+        order = Order.objects.get(id=id)
+        return render(
+            request=request,
+            template_name='accounts/delete.html',
+            context={'item':order},
+        )
 
+    def post(self,request,id):
+        order = Order.objects.get(id=id)
+        order.delete()
+
+        return redirect('home')
 
 
 
