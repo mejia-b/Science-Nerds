@@ -69,3 +69,41 @@ class CreateOrderView(View):
 
         return redirect('home')
 
+class UpdateOrderView(View):
+    def get(self,request,id):
+        order = Order.objects.get(id=id)
+        form = OrderForm(instance=order)
+
+        return render(
+            request=request,
+            template_name='accounts/order_form.html',
+            context={
+                'order_form':form,
+            }
+        )
+
+    def post(self,request,id):
+        order = Order.objects.get(id=id)
+        form = OrderForm(request.POST,instance=order)
+        if form.is_valid():
+            form.save()
+
+        return redirect('home')
+
+class DeleteOrderView(View):
+    def get(self,request,id):
+        order = Order.objects.get(id=id)
+        return render(
+            request=request,
+            template_name='accounts/delete.html',
+            context={'item':order},
+        )
+
+    def post(self,request,id):
+        order = Order.objects.get(id=id)
+        order.delete()
+
+        return redirect('home')
+
+
+
