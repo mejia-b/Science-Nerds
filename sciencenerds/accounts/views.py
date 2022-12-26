@@ -3,6 +3,7 @@ from django.views import View
 from .models import Customer, Product,Order
 from .forms import OrderForm
 from django.forms import inlineformset_factory
+from .filters import OrderFilter
 class HomeView(View):
     def get(self,request):
         orders = list(Order.objects.all())[-5:]
@@ -40,6 +41,8 @@ class CustomerView(View):
         customer = Customer.objects.get(id=id)
         orders = customer.order_set.all()
         total_orders = orders.count()
+        order_filter = OrderFilter(request.GET,queryset=orders)
+        orders = order_filter.qs
         return render(
             request = request,
             template_name= 'accounts/customers.html',
@@ -47,6 +50,7 @@ class CustomerView(View):
                 'customer':customer,
                 'orders': orders,
                 'total_orders': total_orders,
+                'order_filter':order_filter,
             }
         )
 
@@ -90,7 +94,7 @@ class UpdateOrderView(View):
 
         return render(
             request=request,
-            template_name='accounts/order_form.html',
+            template_name='accounts/update_form.html',
             context={
                 'order_form':form,
             }
