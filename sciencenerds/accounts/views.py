@@ -6,7 +6,11 @@ from django.forms import inlineformset_factory
 from .filters import OrderFilter
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
-class HomeView(View):
+from django.contrib.auth.mixins import LoginRequiredMixin
+
+
+class HomeView(LoginRequiredMixin,View):
+    login_url = 'login'
     def get(self,request):
         orders = list(Order.objects.all())[-5:]
         customers = Customer.objects.all()
@@ -28,7 +32,8 @@ class HomeView(View):
                 }
         )
 
-class ProductsView(View):
+class ProductsView(LoginRequiredMixin,View):
+     login_url = 'login'
      def get(self,request):
         products = Product.objects.all()
         return render(
@@ -38,7 +43,8 @@ class ProductsView(View):
         )
     
 
-class CustomerView(View):
+class CustomerView(LoginRequiredMixin,View):
+    login_url = 'login'
     def get(self,request,id):
         customer = Customer.objects.get(id=id)
         orders = customer.order_set.all()
@@ -56,7 +62,8 @@ class CustomerView(View):
             }
         )
 
-class CreateOrderView(View):
+class CreateOrderView(LoginRequiredMixin,View):
+    login_url = 'login'
     def get(self,request,id):
         # Create a form that can display multiple forms
         OrderFormSet = inlineformset_factory(Customer,Order, fields=['product','status'], extra=7)
@@ -86,7 +93,8 @@ class CreateOrderView(View):
 
         return redirect('home')
 
-class UpdateOrderView(View):
+class UpdateOrderView(LoginRequiredMixin,View):
+    login_url = 'login'
     def get(self,request,id):
         order = Order.objects.get(id=id)
         form = OrderForm(instance=order)
@@ -107,7 +115,8 @@ class UpdateOrderView(View):
 
         return redirect('home')
 
-class DeleteOrderView(View):
+class DeleteOrderView(LoginRequiredMixin,View):
+    login_url = 'login'
     def get(self,request,id):
         order = Order.objects.get(id=id)
         return render(
@@ -123,16 +132,20 @@ class DeleteOrderView(View):
         return redirect('home')
 
 
-class RegisterView(View):
+class RegisterView(LoginRequiredMixin,View):
+    login_url = 'login'
     def get(self,request):
-        form = CreateUserForm()
-        return render(
-            request=request,
-            template_name='accounts/register.html',
-            context= {
-                'form':form,
-            },
-        )
+        if request.user.is_authenticated:
+            return redirect('home')
+        else:
+            form = CreateUserForm()
+            return render(
+                request=request,
+                template_name='accounts/register.html',
+                context= {
+                    'form':form,
+                },
+            )
 
     def post(self,request):
         form = CreateUserForm(request.POST)
@@ -152,10 +165,13 @@ class RegisterView(View):
 
 class LoginView(View):
     def get(self,request):
-        return render(
-            request=request,
-            template_name='accounts/login.html'
-        )
+       if request.user.is_authenticated:
+            return redirect('home')
+       else:
+            return render(
+                request=request,
+                template_name='accounts/login.html'
+            )
 
     def post(self,request):
         username = request.POST.get('username')
