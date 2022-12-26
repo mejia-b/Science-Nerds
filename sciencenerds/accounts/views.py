@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import Customer, Product,Order
-from .forms import OrderForm
+from .forms import OrderForm, CreateUserForm
 from django.forms import inlineformset_factory
 from .filters import OrderFilter
 class HomeView(View):
@@ -53,9 +53,6 @@ class CustomerView(View):
                 'order_filter':order_filter,
             }
         )
-
-
-
 
 class CreateOrderView(View):
     def get(self,request,id):
@@ -122,6 +119,38 @@ class DeleteOrderView(View):
         order.delete()
 
         return redirect('home')
+
+
+class RegisterView(View):
+    def get(self,request):
+        form = CreateUserForm()
+        return render(
+            request=request,
+            template_name='accounts/register.html',
+            context= {
+                'form':form,
+            },
+        )
+
+    def post(self,request):
+        form = CreateUserForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('login')
+        return render(
+            request=request,
+            template_name='accounts/register.html',
+             context= {
+                'form':form,
+            },
+        )
+
+class LoginView(View):
+    def get(self,request):
+        return render(
+            request=request,
+            template_name='accounts/login.html'
+        )
 
 
 
