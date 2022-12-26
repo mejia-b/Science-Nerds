@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 from .models import Customer, Product,Order
 from .forms import OrderForm
+from django.forms import inlineformset_factory
 class HomeView(View):
     def get(self,request):
         orders = list(Order.objects.all())[-5:]
@@ -53,19 +54,32 @@ class CustomerView(View):
 
 
 class CreateOrderView(View):
-    def get(self,request):
-        # Create form object
-        form = OrderForm()
+    def get(self,request,id):
+        # Create a form that can display multiple forms
+        OrderFormSet = inlineformset_factory(Customer,Order, fields=['product','status'], extra=7)
+        # Get customer associated with id
+        customer = Customer.objects.get(id=id)
+        # form object with multiple forms
+        # arguments: queryset -> when selecting Order.objects.none() it will not populate any of the forms displayed to one of the 
+        # customers orders. instance -> defines which customer object this formset will apply changes to 
+        formset = OrderFormSet(queryset=Order.objects.none() ,instance=customer)
+        # Create form object and set initial to a dictionary that will populate the form with the data provided
+        #form = OrderForm(initial={'customer':customer})
         return render(
             request=request,
             template_name='accounts/order_form.html',
-            context={'order_form':form},
+            context={'formset':formset},
         )
 
-    def post(self,request):
-        form = OrderForm(request.POST)
-        if form.is_valid():
-            form.save()
+    def post(self,request,id):
+        # Displays a single form
+        #form = OrderForm(request.POST)
+        # Form with multiple forms for order input
+        OrderFormSet = inlineformset_factory(Customer,Order, fields=['product','status'])
+        customer = Customer.objects.get(id=id)
+        formset = OrderFormSet(request.POST,instance=customer)
+        if formset.is_valid():
+            formset.save()
 
         return redirect('home')
 
