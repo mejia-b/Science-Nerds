@@ -4,6 +4,8 @@ from .models import Customer, Product,Order
 from .forms import OrderForm, CreateUserForm
 from django.forms import inlineformset_factory
 from .filters import OrderFilter
+from django.contrib import messages
+from django.contrib.auth import authenticate, login, logout
 class HomeView(View):
     def get(self,request):
         orders = list(Order.objects.all())[-5:]
@@ -134,8 +136,11 @@ class RegisterView(View):
 
     def post(self,request):
         form = CreateUserForm(request.POST)
+        # get the username without getting any other attributes
         if form.is_valid():
             form.save()
+            user = form.cleaned_data.get('username')
+            messages.success(request,'Account was created for ' + user)
             return redirect('login')
         return render(
             request=request,
@@ -152,5 +157,19 @@ class LoginView(View):
             template_name='accounts/login.html'
         )
 
+    def post(self,request):
+        username = request.POST.get('username')
+        password = request.POST.get('password')
+        user = authenticate(request, username=username, password=password)
+        if user is not None:
+            login(request,user)
+            return redirect('home')
+        else:
+            messages.info(request, 'Username OR Password is incorrect')
+            return redirect('login')
 
+class LogoutUserView(View):
+    def get(self,request):
+        logout(request)
+        return redirect('login')
 
