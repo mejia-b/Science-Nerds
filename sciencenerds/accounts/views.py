@@ -7,8 +7,12 @@ from .filters import OrderFilter
 from django.contrib import messages
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
+from .decorators import allowed_users, admin_only
+from django.utils.decorators import method_decorator
+from django.contrib.auth.models import Group
 
 
+@method_decorator(admin_only, name='get')
 class HomeView(LoginRequiredMixin,View):
     login_url = 'login'
     def get(self,request):
@@ -31,7 +35,7 @@ class HomeView(LoginRequiredMixin,View):
                 'pending_count': pending,
                 }
         )
-
+@method_decorator(allowed_users(allowed_roles=['admin']),name='get')
 class ProductsView(LoginRequiredMixin,View):
      login_url = 'login'
      def get(self,request):
@@ -42,7 +46,7 @@ class ProductsView(LoginRequiredMixin,View):
             context={'products':products},
         )
     
-
+@method_decorator(allowed_users(allowed_roles=['admin']),name='get')
 class CustomerView(LoginRequiredMixin,View):
     login_url = 'login'
     def get(self,request,id):
@@ -61,7 +65,7 @@ class CustomerView(LoginRequiredMixin,View):
                 'order_filter':order_filter,
             }
         )
-
+@method_decorator(allowed_users(allowed_roles=['admin']),name='get')
 class CreateOrderView(LoginRequiredMixin,View):
     login_url = 'login'
     def get(self,request,id):
@@ -93,6 +97,7 @@ class CreateOrderView(LoginRequiredMixin,View):
 
         return redirect('home')
 
+@method_decorator(allowed_users(allowed_roles=['admin']),name='get')
 class UpdateOrderView(LoginRequiredMixin,View):
     login_url = 'login'
     def get(self,request,id):
@@ -114,7 +119,7 @@ class UpdateOrderView(LoginRequiredMixin,View):
             form.save()
 
         return redirect('home')
-
+@method_decorator(allowed_users(allowed_roles=['admin']),name='get')
 class DeleteOrderView(LoginRequiredMixin,View):
     login_url = 'login'
     def get(self,request,id):
@@ -132,8 +137,7 @@ class DeleteOrderView(LoginRequiredMixin,View):
         return redirect('home')
 
 
-class RegisterView(LoginRequiredMixin,View):
-    login_url = 'login'
+class RegisterView(View):
     def get(self,request):
         if request.user.is_authenticated:
             return redirect('home')
@@ -151,9 +155,15 @@ class RegisterView(LoginRequiredMixin,View):
         form = CreateUserForm(request.POST)
         # get the username without getting any other attributes
         if form.is_valid():
-            form.save()
-            user = form.cleaned_data.get('username')
-            messages.success(request,'Account was created for ' + user)
+            user = form.save()
+            username = form.cleaned_data.get('username')
+
+            group = Group.objects.get(name='customer')
+            user.groups.add(group)
+            Customer.objects.create(user=user)
+
+            # message that gets displayed in the log in page once the account was successfully created
+            messages.success(request,'Account was created for ' + username)
             return redirect('login')
         return render(
             request=request,
@@ -188,4 +198,24 @@ class LogoutUserView(View):
     def get(self,request):
         logout(request)
         return redirect('login')
+
+@method_decorator(allowed_users(allowed_roles=['customer']),name='get')
+class UserView(LoginRequiredMixin,View):
+    def get(self,request):
+        login_url = 'login'
+        orders = request.user.customer.order_set.all()
+        total_orders = orders.count()
+        delivered = orders.filter(status='Delivered').count()
+        pending = orders.filter(status='Pending').count()
+        print('Orders: ',orders)
+        return render(
+            request=request,
+            template_name='accounts/user.html',
+            context={
+                'orders':orders,
+                'total_orders':total_orders,
+                'delivered_count': delivered,
+                'pending_count': pending,
+                },
+        )
 
