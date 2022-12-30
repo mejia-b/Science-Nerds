@@ -160,7 +160,9 @@ class RegisterView(View):
 
             group = Group.objects.get(name='customer')
             user.groups.add(group)
+            Customer.objects.create(user=user)
 
+            # message that gets displayed in the log in page once the account was successfully created
             messages.success(request,'Account was created for ' + username)
             return redirect('login')
         return render(
@@ -197,12 +199,23 @@ class LogoutUserView(View):
         logout(request)
         return redirect('login')
 
-
-class UserView(View):
+@method_decorator(allowed_users(allowed_roles=['customer']),name='get')
+class UserView(LoginRequiredMixin,View):
     def get(self,request):
+        login_url = 'login'
+        orders = request.user.customer.order_set.all()
+        total_orders = orders.count()
+        delivered = orders.filter(status='Delivered').count()
+        pending = orders.filter(status='Pending').count()
+        print('Orders: ',orders)
         return render(
             request=request,
             template_name='accounts/user.html',
-            context={},
+            context={
+                'orders':orders,
+                'total_orders':total_orders,
+                'delivered_count': delivered,
+                'pending_count': pending,
+                },
         )
 
