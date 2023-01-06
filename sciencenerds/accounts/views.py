@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.views import View
 from .models import Customer, Product,Order
-from .forms import OrderForm, CreateUserForm
+from .forms import OrderForm, CreateUserForm, CustomerForm
 from django.forms import inlineformset_factory
 from .filters import OrderFilter
 from django.contrib import messages
@@ -89,12 +89,11 @@ class CreateOrderView(LoginRequiredMixin,View):
         # Displays a single form
         #form = OrderForm(request.POST)
         # Form with multiple forms for order input
-        OrderFormSet = inlineformset_factory(Customer,Order, fields=['product','status'])
+        OrderFormSet = inlineformset_factory(Customer,Order, fields=['product','status'],can_delete=False)
         customer = Customer.objects.get(id=id)
         formset = OrderFormSet(request.POST,instance=customer)
         if formset.is_valid():
             formset.save()
-
         return redirect('home')
 
 @method_decorator(allowed_users(allowed_roles=['admin']),name='get')
@@ -219,3 +218,20 @@ class UserView(LoginRequiredMixin,View):
                 },
         )
 
+@method_decorator(allowed_users(allowed_roles=['customer']),name='get')
+class AccountSettingsView(LoginRequiredMixin,View):
+    def get(self,request):
+        login_url = 'login'
+        customer = request.user.customer
+        form = CustomerForm(instance=customer)
+        return render(
+            request=request,
+            template_name='accounts/account_settings.html',
+            context={'form':form}
+        )
+    def post(self,request):
+        customer = request.user.customer
+        form = CustomerForm(request.POST, request.FILES, instance=customer)
+        if form.is_valid():
+            form.save()
+        return redirect('account')

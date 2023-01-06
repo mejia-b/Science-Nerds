@@ -2,19 +2,27 @@
 {% load static %}
 {% block content %}
 
-<div class="row">
-    <div class="col-md-6">
-        <div class="card card-body">
-            <form action="" method="POST">
-                {% csrf_token %}
-                {{formset.management_form}}
-                {% for form in formset%}
-                    {{form}}
-                    <hr>
-                {% endfor %}
-                <input type="submit" name="Submit">
-            </form>
+<form action="" method="POST">
+<div class="row"> 
+    {{formset.management_form}}
+    {% for form in formset %}
+    <div class="col-md-3">
+        <div class="card card-body mb-3 mt-3 w-75" style="background-color: bisque;" >
+            {% csrf_token %}
+            {{form}}
+            <hr>
         </div>
     </div>
+    {% endfor %}
+    <div class="center">
+        <input type="submit" name="Submit">
+    </div>  
 </div>
+</form>
+
 {% endblock %}
+
+
+
+   
+    
