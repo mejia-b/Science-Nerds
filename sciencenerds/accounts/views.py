@@ -53,6 +53,7 @@ class CustomerView(LoginRequiredMixin,View):
         customer = Customer.objects.get(id=id)
         orders = customer.order_set.all()
         total_orders = orders.count()
+        # This is for the search bar
         order_filter = OrderFilter(request.GET,queryset=orders)
         orders = order_filter.qs
         return render(
