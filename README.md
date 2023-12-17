@@ -1,4 +1,5 @@
-"# sciencenerds" 
+# Science Nerds 🔭🔬🧪✨ 
+
 A Customer Management Platform built with Django. 
 
 User's have the ability to: 
