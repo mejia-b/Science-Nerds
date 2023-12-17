@@ -146,6 +146,8 @@ class DeleteOrderView(LoginRequiredMixin,View):
 
 class RegisterView(View):
     def get(self,request):
+        # This prevents a logged in user from being able to see the Register page
+        # If this endpoint is typed in the url then it will just redirect to the homepage
         if request.user.is_authenticated:
             return redirect('home')
         else:
@@ -182,6 +184,8 @@ class RegisterView(View):
 
 class LoginView(View):
     def get(self,request):
+       # This prevents a logged in user from viewing the login page
+       # If this endpoint is typed in the url it will just redirect to the home page
        if request.user.is_authenticated:
             return redirect('home')
        else:
