@@ -5,6 +5,7 @@
 <br>
 <!-- First row -->
 <div class="row">
+    <!-- Customer Update and Place new order button section -->
     <div class="col-md">
         <div class="card card-body">
             <h5>Customer</h5>
@@ -13,7 +14,7 @@
             <a class="btn btn-outline-info btn-sm btn-block" href="{% url 'create_order' customer.id %}">Place New Order</a>
         </div>
     </div>
-
+    <!-- Contact Information -->
     <div class="col-md">
         <div class="card card-body">
             <h5>Contact Information</h5>
@@ -22,7 +23,7 @@
             <p>Phone: {{customer.phone}}</p>
         </div>
     </div>
-
+    <!-- Total Orders -->
     <div class="col-md">
         <div class="card card-body">
             <h5>Total Orders: </h5>
@@ -48,7 +49,7 @@
 
 <br>
 <!-- Third row -->
-<!-- Table with all information -->
+<!-- Table with Product, Category, Date Ordered, Status information and Update and Delete buttons -->
 <div class="row">
     <div class="col-md">
         <div class="card card-body">
@@ -76,7 +77,4 @@
         </div>
     </div>
 </div>
-
-
-
 {% endblock %}

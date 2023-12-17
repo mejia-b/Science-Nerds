@@ -40,7 +40,7 @@ class Order(models.Model):
     # attribute for status
 
     # The first element in each tuple is the actual value to be set on the model, 
-    # and the second element is the human-readable name (This comment is taken from the Djanog documentation)
+    # and the second element is the human-readable name (This comment is taken from the Django documentation)
 
     STATUS = (
         ('Pending','Pending'),
@@ -50,7 +50,7 @@ class Order(models.Model):
 
     # Making connection to Customer Table; This is a one to many relationship
     customer = models.ForeignKey(Customer, null=True, on_delete=models.SET_NULL)
-    # Making connection to Product Table; This is a many to many relationship
+    # Making connection to Product Table; This is a one to many relationship
     product = models.ForeignKey(Product, null=True, on_delete=models.SET_NULL)
 
     date_created = models.DateTimeField(auto_now_add=True, null=True)

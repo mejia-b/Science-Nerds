@@ -54,11 +54,14 @@ class CustomerView(LoginRequiredMixin,View):
         orders = customer.order_set.all()
         total_orders = orders.count()
         # This is for the search bar
+        # If there is any data that was entered to be filtered
+        # The OrderFilter request.GET will execute and filter down the 
+        # values that were set on the attribute of queryset
         order_filter = OrderFilter(request.GET,queryset=orders)
         orders = order_filter.qs
         return render(
             request = request,
-            template_name= 'accounts/customers.html',
+            template_name= 'accounts/customer.html',
             context={
                 'customer':customer,
                 'orders': orders,
@@ -71,7 +74,11 @@ class CreateOrderView(LoginRequiredMixin,View):
     login_url = 'login'
     def get(self,request,id):
         # Create a form that can display multiple forms
-        OrderFormSet = inlineformset_factory(Customer,Order, fields=['product','status'], extra=7)
+        # By doing this we can place multiple orders at once for a single customer
+        # first parameter -> Parent model
+        # second parameter -> Child model
+        # fields-> what fields to allow for the child model
+        OrderFormSet = inlineformset_factory(Customer,Order, fields=['product','status'], extra=4)
         # Get customer associated with id
         customer = Customer.objects.get(id=id)
         # form object with multiple forms
@@ -201,8 +208,8 @@ class LogoutUserView(View):
 
 @method_decorator(allowed_users(allowed_roles=['customer']),name='get')
 class UserView(LoginRequiredMixin,View):
+    login_url = 'login'
     def get(self,request):
-        login_url = 'login'
         orders = request.user.customer.order_set.all()
         total_orders = orders.count()
         delivered = orders.filter(status='Delivered').count()
@@ -221,8 +228,8 @@ class UserView(LoginRequiredMixin,View):
 
 @method_decorator(allowed_users(allowed_roles=['customer']),name='get')
 class AccountSettingsView(LoginRequiredMixin,View):
+    login_url = 'login'
     def get(self,request):
-        login_url = 'login'
         customer = request.user.customer
         form = CustomerForm(instance=customer)
         return render(
