@@ -120,6 +120,8 @@ USE_TZ = True
 
 STATIC_URL = 'static/'
 
+# by default this url is not configured 
+# It needs to be added within the url.py file of the project folder
 MEDIA_URL = 'images/'
 
 STATICFILES_DIRS = [
