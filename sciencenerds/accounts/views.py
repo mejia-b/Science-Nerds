@@ -163,16 +163,9 @@ class RegisterView(View):
         form = CreateUserForm(request.POST)
         # get the username without getting any other attributes
         if form.is_valid():
-            # When a user is created these next few lines will associate the user to the customer group
-            user = form.save()
-            group = Group.objects.get(name='customer')
-            user.groups.add(group)
-            # Upon saving the info entered from the form in the above user variable
-            # We are able to create a customer object and associate a user instance to the customer model object.
-            # In order to populate other attributes in the customer model, we just type out the correct
-            # keyword attribute name, ex. name=user.username etc. 
-            Customer.objects.create(user=user, name=user.username, email=user.email)
-
+            # Once this from gets saved a user is created and then the signal gets called
+            # to make the connection where a User instance will also have a connection to a Customer instance
+            form.save()
             username = form.cleaned_data.get('username')
             # message that gets displayed in the log in page once the account was successfully created
             messages.success(request,'Account was created for ' + username)
