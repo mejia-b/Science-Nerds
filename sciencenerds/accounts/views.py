@@ -143,9 +143,10 @@ class DeleteOrderView(LoginRequiredMixin,View):
 
         return redirect('home')
 
-
 class RegisterView(View):
     def get(self,request):
+        # This prevents a logged in user from being able to see the Register page
+        # If this endpoint is typed in the url then it will just redirect to the homepage
         if request.user.is_authenticated:
             return redirect('home')
         else:
@@ -162,13 +163,17 @@ class RegisterView(View):
         form = CreateUserForm(request.POST)
         # get the username without getting any other attributes
         if form.is_valid():
+            # When a user is created these next few lines will associate the user to the customer group
             user = form.save()
-            username = form.cleaned_data.get('username')
-
             group = Group.objects.get(name='customer')
             user.groups.add(group)
-            Customer.objects.create(user=user)
+            # Upon saving the info entered from the form in the above user variable
+            # We are able to create a customer object and associate a user instance to the customer model object.
+            # In order to populate other attributes in the customer model, we just type out the correct
+            # keyword attribute name, ex. name=user.username etc. 
+            Customer.objects.create(user=user, name=user.username, email=user.email)
 
+            username = form.cleaned_data.get('username')
             # message that gets displayed in the log in page once the account was successfully created
             messages.success(request,'Account was created for ' + username)
             return redirect('login')
@@ -182,6 +187,8 @@ class RegisterView(View):
 
 class LoginView(View):
     def get(self,request):
+       # This prevents a logged in user from viewing the login page
+       # If this endpoint is typed in the url it will just redirect to the home page
        if request.user.is_authenticated:
             return redirect('home')
        else:

@@ -27,6 +27,8 @@
 
     <div class="col-md-9">
         <div class="card card-body">
+            <!-- The enctype attribute within the form tag is included since the form
+            will allow for image data to be sent -->
             <form method="POST" action="" enctype="multipart/form-data">
                 {% csrf_token %}
                 {{form.as_p}}
