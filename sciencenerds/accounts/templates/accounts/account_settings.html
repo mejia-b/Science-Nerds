@@ -11,13 +11,17 @@
         margin: 0 auto;
         border-radius: 50%;
     }
+
+    #back-to-profile {
+        background-color: #b7c7eb;
+    }
 </style>
 
 <br>
 <div class="row">
     <div class="col-md-3">
         <div class="card card-body">
-            <a class="btn btn-warning" href="{% url 'home' %}"> &#8592; Back to Profile</a>
+            <a class="btn" id="back-to-profile" href="{% url 'home' %}"> &#8592; Back to Profile</a>
             <hr>
             <h3 style="text-align: center"> Account Settings</h3>
             <hr>
