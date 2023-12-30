@@ -214,7 +214,6 @@ class UserView(LoginRequiredMixin,View):
         total_orders = orders.count()
         delivered = orders.filter(status='Delivered').count()
         pending = orders.filter(status='Pending').count()
-        print('Orders: ',orders)
         return render(
             request=request,
             template_name='accounts/user.html',
