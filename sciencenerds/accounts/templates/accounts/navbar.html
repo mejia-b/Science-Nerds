@@ -7,6 +7,14 @@
     margin-right: 20px;
     white-space: nowrap;
   }
+
+  .profile-pic{
+    max-width: 100px;
+    max-height: 100px;
+    margin: 0 auto;
+    border-radius: 50%;
+    padding: 5px;
+}
   
   
 
@@ -33,8 +41,16 @@
     </div>
 
     <span class="hello-msg">Hello, {{request.user}}</span>
-    <span><a class="hello-msg" href="{% url 'logout' %}">Logout</a></span>
     {% if not request.user.is_staff %}
-    <span><a class="settings" href="{% url 'account' %}">Settings</a></span>
+    <div>
+      <img class="profile-pic" src="{{request.user.customer.profile_image.url}}">
+    </div>
     {% endif %}
+    <div>
+      <span><a class="hello-msg" href="{% url 'logout' %}">Logout</a></span>
+      {% if not request.user.is_staff %}
+      <span><a class="settings" href="{% url 'account' %}">Settings</a></span>
+      {% endif %}
+    </div>
+    
 </nav>
