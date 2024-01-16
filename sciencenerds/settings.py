@@ -26,6 +26,7 @@ SECRET_KEY = os.environ.get('SECRET_KEY', default='your secret key')
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = 'RENDER' not in os.environ
+#DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -136,17 +137,19 @@ if not DEBUG:
     # Turn on WhiteNoise storage backend that takes care of compressing static files
     # and creating unique names for each version so they can safely be cached forever.
     STATICFILES_STORAGE = 'whitenoise.storage.CompressedManifestStaticFilesStorage'
+else:
+    STATIC_URL = 'static/'
 
-# by default this url is not configured 
-# It needs to be added within the url.py file of the project folder
-# MEDIA_URL = 'images/'
+    # by default this url is not configured 
+    # It needs to be added within the url.py file of the project folder
+    MEDIA_URL = 'images/'
 
-# STATICFILES_DIRS = [
-#     os.path.join(BASE_DIR, 'static'),
-# ]
+    STATICFILES_DIRS = [
+        os.path.join(BASE_DIR, 'static'),
+    ]
 
-# MEDIA_ROOT = os.path.join(BASE_DIR,'static/images')
-# # Default primary key field type
-# # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
+    MEDIA_ROOT = os.path.join(BASE_DIR,'static/images')
+    # # Default primary key field type
+    # # https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
 
 # DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
