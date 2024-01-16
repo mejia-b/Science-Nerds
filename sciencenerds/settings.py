@@ -85,7 +85,7 @@ WSGI_APPLICATION = 'sciencenerds.wsgi.application'
 DATABASES = {
     'default': dj_database_url.config(
         # Feel free to alter this value to suit your needs.
-        default='postgres://science_nerds_database_g6is_user:eeiKLWBpfDILQsxuSXxoRtK35Y3WbGun@dpg-cmi9kimn7f5s73a21b4g-a.oregon-postgres.render.com/science_nerds_database_g6is',
+        default='postgresql://postgres:postgres@localhost:5432/sciencenerds',
         conn_max_age=600
     )
 }
